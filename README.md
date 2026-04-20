@@ -182,4 +182,4 @@ All UI components are built on Radix UI primitives with Tailwind styling:
 
 ## License
 
-MIT
+Created by Hazami
