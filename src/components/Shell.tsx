@@ -39,9 +39,13 @@ export function Shell({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 m-4 mr-0 rounded-3xl glass p-5 sticky top-4 self-start h-[calc(100vh-2rem)] overflow-y-auto">
         <Link to="/" className="flex items-center gap-3 px-2 mb-8">
-          <div className="h-10 w-10 rounded-2xl bg-[image:var(--gradient-primary)] grid place-items-center shadow-lg">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
+        <div className="h-10 w-10 rounded-2xl overflow-hidden shadow-lg">
+          <img
+            src="/QE-logo.png"
+            alt="QE Hub Logo"
+            className="h-full w-full object-contain translate-y-0.5"
+          />
+        </div>
           <div>
             <div className="font-display font-bold leading-tight">QE Hub</div>
             <div className="text-xs text-muted-foreground">Automation OS</div>
@@ -120,6 +124,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </>
           )}
         </div>
+        <div className="text-xs text-muted-foreground text-center pt-2">Made by Hazami</div>
       </aside>
 
       {/* Main */}
