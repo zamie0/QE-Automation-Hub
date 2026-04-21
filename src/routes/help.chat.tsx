@@ -116,7 +116,7 @@ function ChatPage() {
                 </span>
               </h1>
               <p className="mt-1 text-sm text-muted-foreground max-w-xl">
-                Ask anything about projects, scripts, RPA flows, runs, or integrations. Powered by Lovable AI.
+                Ask anything about projects, scripts, RPA flows, runs, or integrations.
               </p>
             </div>
           </div>
