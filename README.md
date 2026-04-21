@@ -180,6 +180,148 @@ All UI components are built on Radix UI primitives with Tailwind styling:
 - `url`, `headers`, `body`, `expectedStatus`
 - `lastStatus`, `lastDurationMs`, `tags[]`
 
+## Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+## Deployment
+
+This project is configured for **Cloudflare Pages** deployment:
+
+```bash
+# Build for production
+npm run build
+
+# Preview production build locally
+npm run preview
+```
+
+The app uses the `@cloudflare/vite-plugin` for server-side rendering on Cloudflare Workers. Configuration is in [wrangler.jsonc](wrangler.jsonc):
+
+- **Compatibility Date**: `2025-09-24`
+- **Compatibility Flag**: `nodejs_compat`
+- **Entry Point**: `@tanstack/react-start/server-entry`
+
+## Lovable Platform
+
+This project is built on **Lovable** (lovable.dev), which provides:
+- Pre-configured TanStack Start + React + Vite setup
+- Automatic Cloudflare deployment
+- Built-in component tagging for debugging
+- Sandboxed development environment
+
+The config is handled by `@lovable.dev/vite-tanstack-config` — do not add duplicate plugins in `vite.config.ts`.
+
+## Color Palette (OKLCH)
+
+The design system uses the OKLCH color space for consistent, accessible colors:
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--primary` | `oklch(0.55 0.22 275)` | Violet/blue accent |
+| `--success` | `oklch(0.68 0.17 155)` | Green (passed tests) |
+| `--warning` | `oklch(0.78 0.16 75)` | Yellow (pending) |
+| `--destructive` | `oklch(0.62 0.24 25)` | Red (failed tests) |
+| `--background` | `oklch(0.99 0.005 240)` | Near-white base |
+
+## Typography
+
+- **Display Font**: Space Grotesk (headings, logo)
+- **Body Font**: Inter (UI text, forms)
+
+Loaded via Google Fonts in [__root.tsx](src/routes/__root.tsx).
+
+## Extended Data Models
+
+### Environment
+```typescript
+interface Environment {
+  id: string;
+  name: "Dev" | "UAT" | "Prod";
+  baseUrl: string;
+  variables: { key: string; value: string; secret?: boolean }[];
+}
+```
+
+### TestSuite
+```typescript
+interface TestSuite {
+  id: string;
+  name: string;
+  caseIds: string[];
+  schedule?: string;
+}
+```
+
+### DiscussionPost
+```typescript
+interface DiscussionPost {
+  id: string;
+  author: string;
+  initials: string;
+  date: string;
+  title: string;
+  body: string;
+  replies: number;
+  linkedTo?: { type: "case" | "api" | "run"; id: string; label: string };
+  tags: string[];
+}
+```
+
+### Coverage
+```typescript
+interface Coverage {
+  ui: number;    // percentage
+  api: number;   // percentage
+  mobile: number; // percentage
+}
+```
+
+### FlakyTest
+```typescript
+interface FlakyTest {
+  id: string;
+  title: string;
+  failureRate: number;
+  lastFailures: number;
+}
+```
+
+## SEO & Meta
+
+The app includes Open Graph and Twitter Card meta tags:
+
+- **OG Title**: "QE Automation Hub"
+- **OG Description**: "Manage automation projects, scripts, RPA flows and execution results in one glassy workspace."
+- **OG Type**: website
+- **Twitter Card**: summary_large_image
+
+## Linting
+
+ESLint configuration in [eslint.config.js](eslint.config.js):
+- TypeScript ESLint
+- React Hooks plugin
+- React Refresh plugin
+- Prettier integration
+
+```bash
+npm run lint    # Check code
+npm run format  # Auto-fix formatting
+```
+
+## TypeScript Config
+
+Strict mode enabled with:
+- **Target**: ES2022
+- **Module**: ESNext
+- **Path Alias**: `@/*` → `./src/*`
+
 ## License
 
 Created by Hazami
