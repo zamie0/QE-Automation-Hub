@@ -208,16 +208,6 @@ The app uses the `@cloudflare/vite-plugin` for server-side rendering on Cloudfla
 - **Compatibility Flag**: `nodejs_compat`
 - **Entry Point**: `@tanstack/react-start/server-entry`
 
-## Lovable Platform
-
-This project is built on **Lovable** (lovable.dev), which provides:
-- Pre-configured TanStack Start + React + Vite setup
-- Automatic Cloudflare deployment
-- Built-in component tagging for debugging
-- Sandboxed development environment
-
-The config is handled by `@lovable.dev/vite-tanstack-config` — do not add duplicate plugins in `vite.config.ts`.
-
 ## Color Palette (OKLCH)
 
 The design system uses the OKLCH color space for consistent, accessible colors:
