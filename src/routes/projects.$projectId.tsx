@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { Shell } from "@/components/Shell";
 import { getProject } from "@/lib/mock-data";
 import { useState } from "react";
@@ -42,6 +42,27 @@ export const Route = createFileRoute("/projects/$projectId")({
       { name: "description", content: loaderData?.project.description ?? "" },
     ],
   }),
+  errorComponent: ({ error, reset }) => {
+    const router = useRouter();
+
+    return (
+      <Shell>
+        <div className="rounded-3xl glass p-10 text-center">
+          <h1 className="text-2xl font-bold">Couldn’t load project</h1>
+          <p className="mt-3 text-sm text-muted-foreground">{error.message}</p>
+          <button
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[image:var(--gradient-primary)] px-5 py-2.5 text-sm font-medium text-white shadow-lg"
+          >
+            Try again
+          </button>
+        </div>
+      </Shell>
+    );
+  },
   notFoundComponent: () => (
     <Shell>
       <div className="rounded-3xl glass p-10 text-center">

@@ -13,8 +13,13 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as RunsRouteImport } from './routes/runs'
 import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
+import { Route as HelpTutorialRouteImport } from './routes/help.tutorial'
+import { Route as HelpFaqRouteImport } from './routes/help.faq'
+import { Route as HelpChatRouteImport } from './routes/help.chat'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -36,71 +41,125 @@ const ProjectsRoute = ProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProjectsRoute,
 } as any)
 const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
   id: '/$projectId',
   path: '/$projectId',
   getParentRoute: () => ProjectsRoute,
 } as any)
+const HelpTutorialRoute = HelpTutorialRouteImport.update({
+  id: '/tutorial',
+  path: '/tutorial',
+  getParentRoute: () => HelpRoute,
+} as any)
+const HelpFaqRoute = HelpFaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => HelpRoute,
+} as any)
+const HelpChatRoute = HelpChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => HelpRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/help': typeof HelpRouteWithChildren
   '/projects': typeof ProjectsRouteWithChildren
   '/runs': typeof RunsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
+  '/help/chat': typeof HelpChatRoute
+  '/help/faq': typeof HelpFaqRoute
+  '/help/tutorial': typeof HelpTutorialRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/projects': typeof ProjectsRouteWithChildren
+  '/help': typeof HelpRouteWithChildren
   '/runs': typeof RunsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
+  '/help/chat': typeof HelpChatRoute
+  '/help/faq': typeof HelpFaqRoute
+  '/help/tutorial': typeof HelpTutorialRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/projects': typeof ProjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/help': typeof HelpRouteWithChildren
   '/projects': typeof ProjectsRouteWithChildren
   '/runs': typeof RunsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
+  '/help/chat': typeof HelpChatRoute
+  '/help/faq': typeof HelpFaqRoute
+  '/help/tutorial': typeof HelpTutorialRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/help'
     | '/projects'
     | '/runs'
     | '/schedule'
     | '/settings'
+    | '/help/chat'
+    | '/help/faq'
+    | '/help/tutorial'
     | '/projects/$projectId'
+    | '/projects/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/projects'
+    | '/help'
     | '/runs'
     | '/schedule'
     | '/settings'
+    | '/help/chat'
+    | '/help/faq'
+    | '/help/tutorial'
     | '/projects/$projectId'
+    | '/projects'
   id:
     | '__root__'
     | '/'
+    | '/help'
     | '/projects'
     | '/runs'
     | '/schedule'
     | '/settings'
+    | '/help/chat'
+    | '/help/faq'
+    | '/help/tutorial'
     | '/projects/$projectId'
+    | '/projects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HelpRoute: typeof HelpRouteWithChildren
   ProjectsRoute: typeof ProjectsRouteWithChildren
   RunsRoute: typeof RunsRoute
   ScheduleRoute: typeof ScheduleRoute
@@ -137,12 +196,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/projects/': {
+      id: '/projects/'
+      path: '/'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof ProjectsRoute
     }
     '/projects/$projectId': {
       id: '/projects/$projectId'
@@ -151,15 +224,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdRouteImport
       parentRoute: typeof ProjectsRoute
     }
+    '/help/tutorial': {
+      id: '/help/tutorial'
+      path: '/tutorial'
+      fullPath: '/help/tutorial'
+      preLoaderRoute: typeof HelpTutorialRouteImport
+      parentRoute: typeof HelpRoute
+    }
+    '/help/faq': {
+      id: '/help/faq'
+      path: '/faq'
+      fullPath: '/help/faq'
+      preLoaderRoute: typeof HelpFaqRouteImport
+      parentRoute: typeof HelpRoute
+    }
+    '/help/chat': {
+      id: '/help/chat'
+      path: '/chat'
+      fullPath: '/help/chat'
+      preLoaderRoute: typeof HelpChatRouteImport
+      parentRoute: typeof HelpRoute
+    }
   }
 }
 
+interface HelpRouteChildren {
+  HelpChatRoute: typeof HelpChatRoute
+  HelpFaqRoute: typeof HelpFaqRoute
+  HelpTutorialRoute: typeof HelpTutorialRoute
+}
+
+const HelpRouteChildren: HelpRouteChildren = {
+  HelpChatRoute: HelpChatRoute,
+  HelpFaqRoute: HelpFaqRoute,
+  HelpTutorialRoute: HelpTutorialRoute,
+}
+
+const HelpRouteWithChildren = HelpRoute._addFileChildren(HelpRouteChildren)
+
 interface ProjectsRouteChildren {
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
 
 const ProjectsRouteChildren: ProjectsRouteChildren = {
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
 }
 
 const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
@@ -168,6 +278,7 @@ const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HelpRoute: HelpRouteWithChildren,
   ProjectsRoute: ProjectsRouteWithChildren,
   RunsRoute: RunsRoute,
   ScheduleRoute: ScheduleRoute,
