@@ -18,7 +18,7 @@ QE Automation Hub provides a centralized interface for quality engineers to mana
 | Forms | [React Hook Form](https://react-hook-form.com) + [Zod](https://zod.dev) |
 | Icons | [Lucide React](https://lucide.dev) |
 | Build Tool | [Vite 7](https://vite.dev) |
-| Deployment | [Cloudflare Pages](https://pages.cloudflare.com) (via `@cloudflare/vite-plugin`) |
+| Deployment | [Vercel](https://vercel.com) (SSR/SSG) |
 | Language | TypeScript |
 | Linting | ESLint + Prettier |
 
@@ -192,7 +192,7 @@ npm run dev
 
 ## Deployment
 
-This project is configured for **Cloudflare Pages** deployment:
+This project is configured for **Vercel** deployment (SSR/SSG):
 
 ```bash
 # Build for production
@@ -202,11 +202,24 @@ npm run build
 npm run preview
 ```
 
-The app uses the `@cloudflare/vite-plugin` for server-side rendering on Cloudflare Workers. Configuration is in [wrangler.jsonc](wrangler.jsonc):
+### Vercel Setup
 
-- **Compatibility Date**: `2025-09-24`
-- **Compatibility Flag**: `nodejs_compat`
-- **Entry Point**: `@tanstack/react-start/server-entry`
+1. Install Vercel CLI: `npm i -g vercel`
+2. Run `vercel` in project root
+3. Or connect GitHub repo to Vercel for automatic deployments
+
+The `vercel.json` already includes rewrites for SPA routing:
+
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+}
+```
+
+### Build Output
+
+- **Client**: `dist/client/` — static assets
+- **Server**: `dist/server/` — SSR entry point for Vercel Edge/Node.js
 
 ## Color Palette (OKLCH)
 
