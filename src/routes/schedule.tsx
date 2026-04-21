@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Shell } from "@/components/Shell";
 import { projects } from "@/lib/mock-data";
 import { Clock, Repeat } from "lucide-react";
+import { useState, useEffect } from "react";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
 
 export const Route = createFileRoute("/schedule")({
   head: () => ({
@@ -24,8 +27,28 @@ const scheduled = [
 ];
 
 export default function SchedulePage() {
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [events, setEvents] = useState<any[]>(scheduled);
+  const [newEvent, setNewEvent] = useState({
+    title: "",
+    project: "",
+    time: "",
+  });
+
+  // ✅ Load from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("events");
+    if (saved) setEvents(JSON.parse(saved));
+  }, []);
+
+  // ✅ Save to localStorage
+  useEffect(() => {
+    localStorage.setItem("events", JSON.stringify(events));
+  }, [events]);
+
   return (
     <Shell>
+      {/* Header */}
       <div className="rounded-3xl glass-strong p-6 mb-5">
         <h1 className="text-3xl font-bold">Schedule</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -34,6 +57,7 @@ export default function SchedulePage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4">
+        {/* Weekly View */}
         <div className="lg:col-span-2 rounded-3xl glass p-6">
           <h2 className="font-semibold mb-4">Weekly view</h2>
           <div className="grid grid-cols-7 gap-2">
@@ -41,14 +65,16 @@ export default function SchedulePage() {
               <div key={d} className="rounded-2xl bg-white/40 border border-white/60 p-3 min-h-[160px]">
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{d}</div>
                 <div className="mt-2 space-y-1.5">
-                  {scheduled
+                  {events
                     .filter((_, idx) => (idx + i) % 3 !== 0)
                     .slice(0, 2)
                     .map((s, j) => (
                       <div key={j} className="rounded-lg p-2 text-[10px] font-medium glass">
                         <div className={`h-1 w-6 rounded-full bg-gradient-to-r ${s.color} mb-1`} />
                         <div className="truncate">{s.title}</div>
-                        <div className="text-muted-foreground">{s.cron.split("·")[1]}</div>
+                        <div className="text-muted-foreground">
+                          {s.cron?.split("·")[1] || s.time}
+                        </div>
                       </div>
                     ))}
                 </div>
@@ -57,25 +83,92 @@ export default function SchedulePage() {
           </div>
         </div>
 
-        <div className="rounded-3xl glass p-6">
-          <h2 className="font-semibold mb-4">Upcoming</h2>
-          <div className="space-y-3">
-            {scheduled.map((s, i) => (
-              <div key={i} className="rounded-2xl bg-white/50 border border-white/60 p-3 flex items-center gap-3">
-                <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${s.color} grid place-items-center text-white text-[10px] font-bold`}>
-                  {s.project.slice(0, 2).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{s.title}</div>
-                  <div className="text-xs text-muted-foreground inline-flex items-center gap-1.5">
-                    <Repeat className="h-3 w-3" /> {s.cron}
+        {/* Right Panel */}
+        <div className="rounded-3xl glass p-6 space-y-5">
+          <h2 className="font-semibold">Calendar</h2>
+
+          {/* Calendar */}
+          <div className="bg-white/50 rounded-2xl p-2">
+            <DayPicker
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+            />
+          </div>
+
+          {/* Add Event */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Add Schedule</h3>
+
+            <div className="space-y-2">
+              <input
+                placeholder="Title"
+                className="w-full rounded-xl px-3 py-2 bg-white/60 border border-white/60 text-sm"
+                value={newEvent.title}
+                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+              />
+
+              <input
+                placeholder="Project"
+                className="w-full rounded-xl px-3 py-2 bg-white/60 border border-white/60 text-sm"
+                value={newEvent.project}
+                onChange={(e) => setNewEvent({ ...newEvent, project: e.target.value })}
+              />
+
+              <input
+                type="time"
+                className="w-full rounded-xl px-3 py-2 bg-white/60 border border-white/60 text-sm"
+                value={newEvent.time}
+                onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+              />
+
+              <button
+                className="w-full rounded-xl py-2 text-sm font-medium text-white bg-gradient-to-r from-violet-500 to-indigo-500"
+                onClick={() => {
+                  if (!newEvent.title) return;
+
+                  const newItem = {
+                    ...newEvent,
+                    cron: `Custom · ${newEvent.time}`,
+                    next: "soon",
+                    color: "from-violet-400 to-indigo-500",
+                    date: selectedDate,
+                  };
+
+                  setEvents([newItem, ...events]);
+
+                  setNewEvent({ title: "", project: "", time: "" });
+                }}
+              >
+                Add Event
+              </button>
+            </div>
+          </div>
+
+          {/* Upcoming */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2">Upcoming</h3>
+
+            <div className="space-y-3 max-h-[250px] overflow-y-auto no-scrollbar">
+              {events.map((s, i) => (
+                <div key={i} className="rounded-2xl bg-white/50 border border-white/60 p-3 flex items-center gap-3">
+                  <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${s.color} grid place-items-center text-white text-[10px] font-bold`}>
+                    {s.project?.slice(0, 2).toUpperCase() || "EV"}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium truncate">{s.title}</div>
+                    <div className="text-xs text-muted-foreground inline-flex items-center gap-1.5">
+                      <Repeat className="h-3 w-3" /> {s.cron}
+                    </div>
+                  </div>
+
+                  <div className="text-xs inline-flex items-center gap-1 text-primary font-medium">
+                    <Clock className="h-3 w-3" /> {s.next}
                   </div>
                 </div>
-                <div className="text-xs inline-flex items-center gap-1 text-primary font-medium">
-                  <Clock className="h-3 w-3" /> {s.next}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

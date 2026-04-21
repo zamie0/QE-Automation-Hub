@@ -181,3 +181,13 @@
     color: transparent;
   }
 }
+
+/* Hide scrollbar but keep scrolling */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Opera */
+}
