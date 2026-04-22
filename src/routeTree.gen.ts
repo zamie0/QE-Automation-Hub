@@ -13,12 +13,15 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as RunsRouteImport } from './routes/runs'
 import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
 import { Route as HelpTutorialRouteImport } from './routes/help.tutorial'
 import { Route as HelpFaqRouteImport } from './routes/help.faq'
+import { Route as HelpContactRouteImport } from './routes/help.contact'
 import { Route as HelpChatRouteImport } from './routes/help.chat'
 
 const SettingsRoute = SettingsRouteImport.update({
@@ -39,6 +42,16 @@ const RunsRoute = RunsRouteImport.update({
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HelpRoute = HelpRouteImport.update({
@@ -71,6 +84,11 @@ const HelpFaqRoute = HelpFaqRouteImport.update({
   path: '/faq',
   getParentRoute: () => HelpRoute,
 } as any)
+const HelpContactRoute = HelpContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => HelpRoute,
+} as any)
 const HelpChatRoute = HelpChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -80,11 +98,14 @@ const HelpChatRoute = HelpChatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/help': typeof HelpRouteWithChildren
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRouteWithChildren
   '/runs': typeof RunsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/help/chat': typeof HelpChatRoute
+  '/help/contact': typeof HelpContactRoute
   '/help/faq': typeof HelpFaqRoute
   '/help/tutorial': typeof HelpTutorialRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
@@ -93,10 +114,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/help': typeof HelpRouteWithChildren
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
   '/runs': typeof RunsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/help/chat': typeof HelpChatRoute
+  '/help/contact': typeof HelpContactRoute
   '/help/faq': typeof HelpFaqRoute
   '/help/tutorial': typeof HelpTutorialRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
@@ -106,11 +130,14 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/help': typeof HelpRouteWithChildren
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
   '/projects': typeof ProjectsRouteWithChildren
   '/runs': typeof RunsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/help/chat': typeof HelpChatRoute
+  '/help/contact': typeof HelpContactRoute
   '/help/faq': typeof HelpFaqRoute
   '/help/tutorial': typeof HelpTutorialRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
@@ -121,11 +148,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/help'
+    | '/notifications'
+    | '/profile'
     | '/projects'
     | '/runs'
     | '/schedule'
     | '/settings'
     | '/help/chat'
+    | '/help/contact'
     | '/help/faq'
     | '/help/tutorial'
     | '/projects/$projectId'
@@ -134,10 +164,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/help'
+    | '/notifications'
+    | '/profile'
     | '/runs'
     | '/schedule'
     | '/settings'
     | '/help/chat'
+    | '/help/contact'
     | '/help/faq'
     | '/help/tutorial'
     | '/projects/$projectId'
@@ -146,11 +179,14 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/help'
+    | '/notifications'
+    | '/profile'
     | '/projects'
     | '/runs'
     | '/schedule'
     | '/settings'
     | '/help/chat'
+    | '/help/contact'
     | '/help/faq'
     | '/help/tutorial'
     | '/projects/$projectId'
@@ -160,6 +196,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HelpRoute: typeof HelpRouteWithChildren
+  NotificationsRoute: typeof NotificationsRoute
+  ProfileRoute: typeof ProfileRoute
   ProjectsRoute: typeof ProjectsRouteWithChildren
   RunsRoute: typeof RunsRoute
   ScheduleRoute: typeof ScheduleRoute
@@ -194,6 +232,20 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/help': {
@@ -238,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelpFaqRouteImport
       parentRoute: typeof HelpRoute
     }
+    '/help/contact': {
+      id: '/help/contact'
+      path: '/contact'
+      fullPath: '/help/contact'
+      preLoaderRoute: typeof HelpContactRouteImport
+      parentRoute: typeof HelpRoute
+    }
     '/help/chat': {
       id: '/help/chat'
       path: '/chat'
@@ -250,12 +309,14 @@ declare module '@tanstack/react-router' {
 
 interface HelpRouteChildren {
   HelpChatRoute: typeof HelpChatRoute
+  HelpContactRoute: typeof HelpContactRoute
   HelpFaqRoute: typeof HelpFaqRoute
   HelpTutorialRoute: typeof HelpTutorialRoute
 }
 
 const HelpRouteChildren: HelpRouteChildren = {
   HelpChatRoute: HelpChatRoute,
+  HelpContactRoute: HelpContactRoute,
   HelpFaqRoute: HelpFaqRoute,
   HelpTutorialRoute: HelpTutorialRoute,
 }
@@ -279,6 +340,8 @@ const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HelpRoute: HelpRouteWithChildren,
+  NotificationsRoute: NotificationsRoute,
+  ProfileRoute: ProfileRoute,
   ProjectsRoute: ProjectsRouteWithChildren,
   RunsRoute: RunsRoute,
   ScheduleRoute: ScheduleRoute,

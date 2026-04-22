@@ -41,12 +41,12 @@ export const sendChat = createServerFn({ method: "POST" })
     return { messages: cleaned };
   })
   .handler(async ({ data }) => {
-    const apiKey = process.env.AI_API_KEY;
+    const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      throw new Error("AI assistant is not configured. Missing AI_API_KEY.");
+      throw new Error("AI assistant is not configured. Missing LOVABLE_API_KEY.");
     }
 
-    const res = await fetch("https://ai.gateway.ai.dev/v1/chat/completions", {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,7 +67,7 @@ export const sendChat = createServerFn({ method: "POST" })
         throw new Error("The assistant is rate-limited right now. Please try again in a moment.");
       }
       if (res.status === 402) {
-        throw new Error("AI credits are exhausted.");
+        throw new Error("AI credits are exhausted. Add credits in Lovable workspace settings to continue.");
       }
       throw new Error(`AI gateway error (${res.status}): ${text.slice(0, 200) || "unknown error"}`);
     }
