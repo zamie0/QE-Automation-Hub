@@ -56,10 +56,10 @@ function ProfilePage() {
             </p>
             <div className="mt-4 flex flex-wrap gap-3 text-sm">
               <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-                <Mail className="h-4 w-4" /> hazami@qe-hub.dev
+                <Mail className="h-4 w-4" /> muhdhazami157@gmail.com
               </span>
               <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-                <Phone className="h-4 w-4" /> +60 12-345 6789
+                <Phone className="h-4 w-4" /> +60 19-736 6813
               </span>
               <span className="inline-flex items-center gap-1.5 text-muted-foreground">
                 <Briefcase className="h-4 w-4" /> System Developer
