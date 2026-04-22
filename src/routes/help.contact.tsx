@@ -15,8 +15,8 @@ export const Route = createFileRoute("/help/contact")({
 const CONTACT = {
   name: "Hazami",
   role: "System Developer & Owner",
-  phone: "+60 12-345 6789",
-  email: "hazami@qe-hub.dev",
+  phone: "+60 19-736 6813",
+  email: "muhdhazami157@gmail.com",
   availability: "Mon – Fri · 9:00 AM – 6:00 PM (GMT+8)",
 };
 
@@ -78,14 +78,19 @@ function ContactPage() {
 
           <div className="mt-5 flex gap-2">
             <a
-              href="#"
+              href="https://github.com/zamie0"
+              target="_blank"
+              rel="noopener noreferrer"
               className="h-9 w-9 grid place-items-center rounded-xl bg-white/60 border border-white/70"
               aria-label="GitHub"
             >
               <Github className="h-4 w-4" />
             </a>
+
             <a
-              href="#"
+              href="https://www.linkedin.com/in/muhd-hazami-3a84112a2/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="h-9 w-9 grid place-items-center rounded-xl bg-white/60 border border-white/70"
               aria-label="LinkedIn"
             >
