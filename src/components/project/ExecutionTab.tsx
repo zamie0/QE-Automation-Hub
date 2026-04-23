@@ -1,143 +1,103 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { Project } from "@/lib/mock-data";
-import { Play, Pause, Repeat, Zap, Square, Terminal } from "lucide-react";
+import { useEventTick } from "@/lib/use-storage";
+import {
+  AUTOMATION_EVENT, clearRuns, deleteRun, getState, type RunStatus,
+} from "@/lib/automation-runs";
+import { History, Trash2, CheckCircle2, XCircle, Loader2, Square as SquareIcon, Clock } from "lucide-react";
+import { RunResultsPanel } from "./RunResultsPanel";
 
-const initialLogs = [
-  { ts: "00:00.000", level: "info", msg: "Initializing executor (parallel: 4, retries: 1)…" },
-  { ts: "00:00.214", level: "info", msg: "Loaded environment: UAT — https://uat.tmforce.io" },
-  { ts: "00:00.318", level: "info", msg: "Discovering 12 test cases…" },
-];
-
-const streamLines = [
-  { level: "info", msg: "▶ TM-001 Login with valid SSO credentials" },
-  { level: "info", msg: "  ↳ navigated to /login" },
-  { level: "info", msg: "  ↳ SSO clicked" },
-  { level: "ok", msg: "✓ TM-001 passed in 4.2s" },
-  { level: "info", msg: "▶ TM-002 Create new lead from pipeline view" },
-  { level: "info", msg: "  ↳ POST /v1/leads → 201 in 287ms" },
-  { level: "ok", msg: "✓ TM-002 passed in 6.1s" },
-  { level: "info", msg: "▶ TM-003 Export weekly performance report" },
-  { level: "warn", msg: "  ⚠ Retry 1/1 after 500 from /v1/reports/weekly" },
-  { level: "err", msg: "✗ TM-003 failed: expected 200 got 500" },
-  { level: "info", msg: "▶ TM-004 Bulk reassign leads to manager" },
-  { level: "ok", msg: "✓ TM-004 passed in 5.4s" },
-  { level: "info", msg: "Run summary: 3 passed · 1 failed · 0 skipped (15.7s)" },
-];
-
-const levelColor: Record<string, string> = {
-  info: "text-background/70",
-  ok: "text-emerald-300",
-  warn: "text-amber-300",
-  err: "text-rose-300",
+const statusMeta: Record<RunStatus, { color: string; icon: typeof Clock; label: string }> = {
+  queued: { color: "text-muted-foreground", icon: Clock, label: "Queued" },
+  running: { color: "text-primary", icon: Loader2, label: "Running" },
+  passed: { color: "text-success", icon: CheckCircle2, label: "Passed" },
+  failed: { color: "text-destructive", icon: XCircle, label: "Failed" },
+  stopped: { color: "text-warning-foreground", icon: SquareIcon, label: "Stopped" },
 };
 
-export function ExecutionTab({ project: _project }: { project: Project }) {
-  const [running, setRunning] = useState(false);
-  const [logs, setLogs] = useState(initialLogs);
-  const [parallel, setParallel] = useState(true);
-  const [retry, setRetry] = useState(true);
-  const idxRef = useRef(0);
-  const logRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!running) return;
-    idxRef.current = 0;
-    setLogs(initialLogs);
-    const interval = setInterval(() => {
-      const i = idxRef.current;
-      if (i >= streamLines.length) {
-        clearInterval(interval);
-        setRunning(false);
-        return;
-      }
-      const ts = ((i + 1) * 0.4).toFixed(3).padStart(7, "0");
-      setLogs((prev) => [...prev, { ts: `00:${ts}`, ...streamLines[i] }]);
-      idxRef.current = i + 1;
-    }, 450);
-    return () => clearInterval(interval);
-  }, [running]);
-
-  useEffect(() => {
-    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
-  }, [logs]);
+export function ExecutionTab({ project }: { project: Project }) {
+  useEventTick(AUTOMATION_EVENT);
+  const state = getState(project.id);
+  const [selectedId, setSelectedId] = useState<string>(state.runs[0]?.id ?? "");
+  const selected = state.runs.find((r) => r.id === selectedId) ?? state.runs[0];
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-3xl glass p-6 grid md:grid-cols-[1fr_auto] gap-4 items-center">
-        <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-2">
-            <button className="px-3 py-2 rounded-xl glass text-sm font-medium">Single test</button>
-            <button className="px-3 py-2 rounded-xl glass text-sm font-medium">Suite</button>
-            <button className="px-3 py-2 rounded-xl bg-foreground text-background text-sm font-medium">All</button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Toggle on={parallel} setOn={setParallel} icon={Zap} label="Parallel ⚡" />
-            <Toggle on={retry} setOn={setRetry} icon={Repeat} label="Retry failed" />
-          </div>
+    <div className="grid lg:grid-cols-[320px_1fr] gap-4">
+      {/* Run history */}
+      <div className="rounded-3xl glass p-4 self-start">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-sm flex items-center gap-2">
+            <History className="h-4 w-4" /> Run history
+          </h3>
+          {state.runs.length > 0 && (
+            <button
+              onClick={() => {
+                if (confirm("Clear all run history?")) clearRuns(project.id);
+              }}
+              className="text-[11px] text-muted-foreground hover:text-destructive"
+            >
+              Clear
+            </button>
+          )}
         </div>
-        <button
-          onClick={() => setRunning((r) => !r)}
-          className={`inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg transition ${
-            running
-              ? "bg-destructive text-destructive-foreground"
-              : "bg-[image:var(--gradient-primary)] text-white"
-          }`}
-        >
-          {running ? <Square className="h-4 w-4 fill-white" /> : <Play className="h-4 w-4 fill-white" />}
-          {running ? "Stop run" : "Start run"}
-        </button>
+
+        {state.runs.length === 0 ? (
+          <div className="text-xs text-muted-foreground text-center py-8">
+            No runs yet. Trigger a run from the <b>Mobile</b> or <b>Scripts</b> tab.
+          </div>
+        ) : (
+          <div className="space-y-1.5 max-h-[600px] overflow-y-auto pr-1">
+            {state.runs.map((r) => {
+              const meta = statusMeta[r.status];
+              const Icon = meta.icon;
+              const active = (selected?.id ?? "") === r.id;
+              return (
+                <button
+                  key={r.id}
+                  onClick={() => setSelectedId(r.id)}
+                  className={`w-full text-left rounded-xl p-2.5 border transition group ${
+                    active
+                      ? "bg-foreground text-background border-foreground"
+                      : "bg-white/60 border-white/70 hover:bg-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Icon className={`h-3.5 w-3.5 shrink-0 ${active ? "" : meta.color} ${r.status === "running" ? "animate-spin" : ""}`} />
+                    <span className="text-xs font-medium truncate flex-1">{r.name}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteRun(project.id, r.id);
+                        if (selectedId === r.id) setSelectedId("");
+                      }}
+                      className={`opacity-0 group-hover:opacity-100 ${active ? "hover:text-rose-300" : "hover:text-destructive"}`}
+                      aria-label="Delete run"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                  <div className={`text-[10px] mt-1 flex items-center gap-2 ${active ? "text-background/70" : "text-muted-foreground"}`}>
+                    <span>{new Date(r.startedAt).toLocaleTimeString()}</span>
+                    <span>·</span>
+                    <span className="text-emerald-500">{r.passed}P</span>
+                    <span className="text-rose-500">{r.failed}F</span>
+                    {r.durationMs && <span>· {(r.durationMs / 1000).toFixed(1)}s</span>}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      <div className="rounded-3xl glass p-0 overflow-hidden">
-        <div className="flex items-center gap-2 px-5 py-3 border-b border-white/40">
-          <Terminal className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-semibold text-sm">Live execution log</h3>
-          {running && (
-            <span className="ml-2 inline-flex items-center gap-1.5 text-xs text-success font-medium">
-              <span className="h-2 w-2 rounded-full bg-success animate-pulse" /> streaming
-            </span>
-          )}
+      {/* Selected run detail */}
+      {selected ? (
+        <RunResultsPanel projectId={project.id} runId={selected.id} />
+      ) : (
+        <div className="rounded-3xl glass p-10 text-center text-sm text-muted-foreground">
+          Select a run to view its logs and screenshots.
         </div>
-        <div
-          ref={logRef}
-          className="bg-foreground p-4 font-mono text-xs h-80 overflow-y-auto"
-        >
-          {logs.map((l, i) => (
-            <div key={i} className="flex gap-3">
-              <span className="text-background/40 shrink-0">{l.ts}</span>
-              <span className={levelColor[l.level] ?? "text-background/80"}>{l.msg}</span>
-            </div>
-          ))}
-          {!running && logs.length <= initialLogs.length && (
-            <div className="text-background/50 italic mt-2">Press “Start run” to stream logs.</div>
-          )}
-        </div>
-      </div>
+      )}
     </div>
-  );
-}
-
-function Toggle({
-  on,
-  setOn,
-  icon: Icon,
-  label,
-}: {
-  on: boolean;
-  setOn: (v: boolean) => void;
-  icon: typeof Pause;
-  label: string;
-}) {
-  return (
-    <button
-      onClick={() => setOn(!on)}
-      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition border ${
-        on
-          ? "bg-foreground text-background border-foreground"
-          : "bg-white/60 text-muted-foreground border-white/70"
-      }`}
-    >
-      <Icon className="h-3.5 w-3.5" /> {label}
-    </button>
   );
 }

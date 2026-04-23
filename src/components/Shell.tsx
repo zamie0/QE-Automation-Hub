@@ -24,6 +24,7 @@ const nav = [
   { to: "/projects", label: "Projects", icon: FolderKanban },
   { to: "/runs", label: "Runs", icon: PlayCircle },
   { to: "/schedule", label: "Schedule", icon: Calendar },
+  { to: "/settings", label: "Settings", icon: SettingsIcon },
 ] as const;
 
 const helpNav = [
@@ -42,12 +43,8 @@ export function Shell({ children }: { children: ReactNode }) {
     <div className="min-h-screen flex">
       <aside className="hidden lg:flex flex-col w-64 m-4 mr-0 rounded-3xl glass p-5 sticky top-4 self-start h-[calc(100vh-2rem)] overflow-y-auto">
         <Link to="/" className="flex items-center gap-3 px-2 mb-8">
-          <div className="h-10 w-10 rounded-2xl overflow-hidden shadow-lg">
-            <img
-              src="/QE-logo.png"
-              alt="logo"
-              className="h-full w-full object-cover translate-y-0.5"
-            />
+          <div className="h-10 w-10 rounded-2xl bg-[image:var(--gradient-primary)] grid place-items-center shadow-lg">
+            <Sparkles className="h-5 w-5 text-white" />
           </div>
           <div>
             <div className="font-display font-bold leading-tight">QE Hub</div>
