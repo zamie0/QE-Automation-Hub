@@ -23,7 +23,7 @@ const CONTACT = {
 function ContactPage() {
   return (
     <Shell>
-      <div className="rounded-3xl glass-strong p-4 mb-5 relative overflow-hidden">
+      <div className="rounded-3xl glass-strong p-6 mb-4 relative overflow-hidden">
         <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-emerald-300 to-sky-400 opacity-25 blur-3xl" />
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-4">
@@ -112,9 +112,6 @@ function ContactPage() {
 
           <div className="rounded-3xl glass p-6">
             <h3 className="font-semibold mb-1">Send a quick message</h3>
-            <p className="text-xs text-muted-foreground mb-4">
-              Opens in your default email client, pre-filled and addressed to Hazami.
-            </p>
             <ContactForm />
           </div>
         </div>

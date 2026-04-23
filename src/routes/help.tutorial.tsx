@@ -64,7 +64,7 @@ function TutorialPage() {
   return (
     <Shell>
       {/* Hero */}
-      <div className="rounded-3xl glass-strong p-7 mb-5 relative overflow-hidden">
+      <div className="rounded-3xl glass-strong p-6 mb-4 relative overflow-hidden">
         <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-emerald-300 to-sky-400 opacity-25 blur-3xl" />
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-4">
