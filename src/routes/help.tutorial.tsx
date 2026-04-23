@@ -200,24 +200,30 @@ function TutorialPage() {
             </button>
 
             <div className="flex gap-2">
-              <button
-                onClick={() => setActive((a) => Math.max(0, a - 1))}
-                disabled={active === 0}
-                className="px-4 py-2.5 rounded-xl glass text-sm"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
+              {/* 👈 Previous (ONLY if not first step) */}
+              {active > 0 && (
+                <button
+                  onClick={() => setActive((a) => a - 1)}
+                  className="px-4 py-2.5 rounded-xl glass text-sm flex items-center gap-1"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </button>
+              )}
 
-              <button
-                onClick={() => {
-                  setDone((prev) => new Set(prev).add(step.id));
-                  setActive((a) => Math.min(total - 1, a + 1));
-                }}
-                disabled={active === total - 1}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-400 to-sky-500 text-white text-sm"
-              >
-                Next <ChevronRight className="h-4 w-4 inline-block ml-1" />
-              </button>
+              {/* 👉 Next (ONLY if not last step) */}
+              {active < total - 1 && (
+                <button
+                  onClick={() => {
+                    setDone((prev) => new Set(prev).add(step.id));
+                    setActive((a) => a + 1);
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-400 to-sky-500 text-white text-sm flex items-center gap-1"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
         </section>
