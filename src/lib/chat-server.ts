@@ -23,6 +23,21 @@ Guidelines:
 - If a question is outside QE / testing / this product, answer briefly and steer back to QE topics.
 - Never invent features that don't exist. If unsure, say so and suggest the closest existing tab.`;
 
+type GeminiRole = "user" | "model";
+type GeminiContent = {
+  role: GeminiRole;
+  parts: { text: string }[];
+};
+
+function toGeminiContents(messages: ChatMessage[]): GeminiContent[] {
+  return messages
+    .filter((m) => m.role === "user" || m.role === "assistant")
+    .map((m) => ({
+      role: m.role === "assistant" ? ("model" as const) : ("user" as const),
+      parts: [{ text: m.content }],
+    }));
+}
+
 export const sendChat = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => {
     if (!data || typeof data !== "object") throw new Error("Invalid payload");
@@ -41,41 +56,40 @@ export const sendChat = createServerFn({ method: "POST" })
     return { messages: cleaned };
   })
   .handler(async ({ data }) => {
-    const apiKey = process.env.AI_API_KEY;
-    if (!apiKey) {
-      throw new Error("AI assistant is not configured. Missing AI_API_KEY.");
-    }
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error("AI assistant is not configured. Missing GEMINI_API_KEY.");
 
-    const res = await fetch("https://ai.gateway.ai.dev/v1/chat/completions", {
+    const model = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
+      model,
+    )}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+    const res = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          ...data.messages,
-        ],
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents: toGeminiContents(data.messages),
+        generationConfig: {
+          temperature: 0.4,
+          topP: 0.95,
+          maxOutputTokens: 900,
+        },
       }),
     });
 
     if (!res.ok) {
       const text = await res.text().catch(() => "");
-      if (res.status === 429) {
-        throw new Error("The assistant is rate-limited right now. Please try again in a moment.");
-      }
-      if (res.status === 402) {
-        throw new Error("AI credits are exhausted.");
-      }
-      throw new Error(`AI gateway error (${res.status}): ${text.slice(0, 200) || "unknown error"}`);
+      if (res.status === 429) throw new Error("The assistant is rate-limited right now. Please try again in a moment.");
+      if (res.status === 401 || res.status === 403) throw new Error("Gemini API key is invalid or unauthorized.");
+      throw new Error(`Gemini API error (${res.status}): ${text.slice(0, 220) || "unknown error"}`);
     }
 
     const json = (await res.json()) as {
-      choices?: { message?: { content?: string } }[];
+      candidates?: { content?: { parts?: { text?: string }[] } }[];
     };
-    const reply = json.choices?.[0]?.message?.content?.trim();
-    if (!reply) throw new Error("Empty response from AI gateway");
+
+    const reply = json.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("").trim();
+    if (!reply) throw new Error("Empty response from Gemini");
     return { reply };
   });

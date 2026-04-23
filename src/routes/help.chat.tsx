@@ -192,7 +192,7 @@ function ChatPage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[280px_1fr] gap-4 h-[calc(100vh-15rem)] min-h-[480px]">
+      <div className="grid lg:grid-cols-[280px_1fr] gap-4 h-[calc(100vh-15rem)] min-h-[570px]">
         {/* Sidebar of chats */}
         <aside className="rounded-3xl glass p-3 flex flex-col overflow-hidden">
           <button
@@ -204,7 +204,7 @@ function ChatPage() {
           <div className="mt-3 flex items-center gap-2 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-2">
             <MessagesSquare className="h-3.5 w-3.5" /> Chats
           </div>
-          <div className="mt-1 flex-1 overflow-y-auto space-y-1 pr-1">
+          <div className="mt-2 flex-1 overflow-y-auto space-y-1 pr-1">
             {conversations.map((c) => {
               const isActive = c.id === activeId;
               const isRenaming = renamingId === c.id;
@@ -258,9 +258,6 @@ function ChatPage() {
               );
             })}
           </div>
-          <p className="mt-2 px-2 text-[10px] text-muted-foreground">
-            Saved in this browser only.
-          </p>
         </aside>
 
         {/* Chat panel */}
@@ -311,7 +308,6 @@ function ChatPage() {
             </div>
             <div className="mt-2 px-2 text-[11px] text-muted-foreground flex items-center justify-between">
               <span>Press Enter to send · Shift + Enter for new line</span>
-              <span>Chats saved locally · {conversations.length} total</span>
             </div>
           </form>
         </div>
