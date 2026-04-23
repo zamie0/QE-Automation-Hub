@@ -10,7 +10,7 @@ import {
   type WebBrowser, type WebEnvironment,
 } from "@/lib/automation-runs";
 import { useEventTick } from "@/lib/use-storage";
-import { RunResultsPanel } from "./RunResultsPanel";
+import { RunResultsPanel } from "../RunResultsPanel";
 
 const BROWSERS: { id: WebBrowser; label: string; tint: string }[] = [
   { id: "Chrome", label: "Chrome", tint: "from-amber-400 to-rose-500" },

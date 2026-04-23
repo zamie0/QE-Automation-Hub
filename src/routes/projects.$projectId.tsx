@@ -13,7 +13,7 @@ import { CasesTab } from "@/components/project/CasesTab";
 import { ApiTab } from "@/components/project/ApiTab";
 import { ScriptsTab } from "@/components/project/ScriptsTab";
 import { MobileTab } from "@/components/project/MobileTab";
-import { WebTab } from "@/components/project/WebTab";
+import { WebTab } from "@/components/project/WebTabElements/WebTab";
 import { ExecutionTab } from "@/components/project/ExecutionTab";
 import { ResultsTab } from "@/components/project/ResultsTab";
 import { RpaTab } from "@/components/project/RpaTab";
