@@ -8,7 +8,7 @@ import {
   AUTOMATION_EVENT, type DeviceConfig,
 } from "@/lib/automation-runs";
 import { useEventTick } from "@/lib/use-storage";
-import { RunResultsPanel } from "./RunResultsPanel";
+import { RunResultsPanel } from "../RunResultsPanel";
 
 export function MobileTab({ project }: { project: Project }) {
   useEventTick(AUTOMATION_EVENT);
