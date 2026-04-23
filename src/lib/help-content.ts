@@ -78,12 +78,23 @@ export const faqGroups = [
   },
 ];
 
+import {
+  FolderPlus,
+  ClipboardList,
+  Code2,
+  Plug,
+  Play,
+  BarChart3,
+  Clock,
+} from "lucide-react";
+
 export const tutorialSteps = [
   {
     id: "create-project",
     title: "Create your first project",
-    icon: "📁",
-    summary: "Spin up a folder-style workspace for a Test Automation suite or an RPA bot.",
+    icon: FolderPlus,
+    summary:
+      "Spin up a folder-style workspace for a Test Automation suite or an RPA bot.",
     detail: [
       "Open **Projects** from the left sidebar.",
       "Click the **+ Create project** button in the top right.",
@@ -94,8 +105,9 @@ export const tutorialSteps = [
   {
     id: "add-cases",
     title: "Add test cases",
-    icon: "📋",
-    summary: "Capture what you're testing — steps, expected result, priority, and tags.",
+    icon: ClipboardList,
+    summary:
+      "Capture what you're testing — steps, expected result, priority, and tags.",
     detail: [
       "Inside a project open the **Test Cases** tab.",
       "Click **+ New case** and fill in title, steps, and expected result.",
@@ -106,8 +118,9 @@ export const tutorialSteps = [
   {
     id: "scripts",
     title: "Upload or write automation scripts",
-    icon: "🤖",
-    summary: "Store your Playwright, Cypress, Robot Framework, or Python scripts inside the project.",
+    icon: Code2,
+    summary:
+      "Store your Playwright, Cypress, Robot Framework, or Python scripts inside the project.",
     detail: [
       "Go to the **Scripts** tab (or **RPA Builder** for RPA projects).",
       "Drop a file or click **+ New script** and pick a framework.",
@@ -117,8 +130,9 @@ export const tutorialSteps = [
   {
     id: "api",
     title: "Test an API endpoint",
-    icon: "🔌",
-    summary: "Define endpoints once, send live requests, and turn responses into test cases.",
+    icon: Plug,
+    summary:
+      "Define endpoints once, send live requests, and turn responses into test cases.",
     detail: [
       "Open the **API Testing** tab and click **+ Add endpoint**.",
       "Choose method (GET / POST / PUT / DELETE), URL, headers, and body.",
@@ -129,8 +143,9 @@ export const tutorialSteps = [
   {
     id: "run",
     title: "Run your tests",
-    icon: "▶️",
-    summary: "Trigger single cases, suites, or the entire project — locally or on CI.",
+    icon: Play,
+    summary:
+      "Trigger single cases, suites, or the entire project — locally or on CI.",
     detail: [
       "Click **Run all** in the project hero, or open the **Execution** tab for finer control.",
       "Logs stream live into the console panel.",
@@ -140,7 +155,7 @@ export const tutorialSteps = [
   {
     id: "results",
     title: "Review results & share reports",
-    icon: "📊",
+    icon: BarChart3,
     summary: "Spot trends, drill into failures, and export reports.",
     detail: [
       "Open the **Results** tab for pass/fail history, flaky test insights, and failure analysis charts.",
@@ -151,8 +166,9 @@ export const tutorialSteps = [
   {
     id: "schedule",
     title: "Schedule and integrate",
-    icon: "⏰",
-    summary: "Run nightly suites, hook up CI/CD, and route notifications.",
+    icon: Clock,
+    summary:
+      "Run nightly suites, hook up CI/CD, and route notifications.",
     detail: [
       "Open the **Schedule** page from the sidebar to set daily / weekly cron triggers.",
       "From the project **Settings** tab connect **Jenkins**, **GitHub Actions**, or **GitLab CI**.",

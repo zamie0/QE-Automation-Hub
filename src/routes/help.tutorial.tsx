@@ -1,7 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Shell } from "@/components/Shell";
 import { useEffect, useState } from "react";
-import { GraduationCap, CheckCircle2, ChevronRight, ChevronLeft, MessageCircle, RotateCcw } from "lucide-react";
+import {
+  GraduationCap,
+  CheckCircle2,
+  ChevronRight,
+  ChevronLeft,
+  RotateCcw,
+} from "lucide-react";
 import { tutorialSteps } from "@/lib/help-content";
 import ReactMarkdown from "react-markdown";
 
@@ -9,7 +15,11 @@ export const Route = createFileRoute("/help/tutorial")({
   head: () => ({
     meta: [
       { title: "Tutorial — QE Automation Hub" },
-      { name: "description", content: "Step-by-step walkthrough: create a project, add cases, run tests, and review results." },
+      {
+        name: "description",
+        content:
+          "Step-by-step walkthrough: create a project, add cases, run tests, and review results.",
+      },
     ],
   }),
   component: TutorialPage,
@@ -25,24 +35,24 @@ function TutorialPage() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as { done: string[]; active: number };
+        const parsed = JSON.parse(raw);
         setDone(new Set(parsed.done ?? []));
         setActive(parsed.active ?? 0);
       }
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }, []);
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ done: [...done], active }));
-    } catch {
-      /* ignore */
-    }
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ done: [...done], active })
+      );
+    } catch {}
   }, [done, active]);
 
   const step = tutorialSteps[active];
+
   const completed = done.size;
   const total = tutorialSteps.length;
   const percent = Math.round((completed / total) * 100);
@@ -61,42 +71,51 @@ function TutorialPage() {
     setActive(0);
   };
 
+  const Icon = step.icon;
+
   return (
     <Shell>
       {/* Hero */}
       <div className="rounded-3xl glass-strong p-6 mb-4 relative overflow-hidden">
         <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-emerald-300 to-sky-400 opacity-25 blur-3xl" />
+
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-4">
             <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-sky-500 grid place-items-center text-white shadow-lg">
               <GraduationCap className="h-6 w-6" />
             </div>
+
             <div>
               <h1 className="text-3xl font-bold">Get started in 7 steps</h1>
               <p className="mt-1 text-sm text-muted-foreground max-w-xl">
-                A guided walkthrough from creating your first project to scheduling nightly runs.
+                A guided walkthrough from creating your first project to
+                scheduling nightly runs.
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={reset}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass text-sm font-medium"
-            >
-              <RotateCcw className="h-4 w-4" /> Reset
-            </button>
-          </div>
+
+          <button
+            onClick={reset}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass text-sm font-medium"
+          >
+            <RotateCcw className="h-4 w-4" /> Reset
+          </button>
         </div>
 
         {/* Progress */}
-        <div className="relative mt-6">
-          <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-            <span>{completed} of {total} steps complete</span>
-            <span className="font-semibold text-foreground">{percent}%</span>
+        <div className="mt-6">
+          <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+            <span>
+              {completed} of {total} steps complete
+            </span>
+            <span className="font-semibold text-foreground">
+              {percent}%
+            </span>
           </div>
+
           <div className="h-2 rounded-full bg-white/60 overflow-hidden">
             <div
-              className="h-full bg-[image:var(--gradient-primary)] transition-[width] duration-500"
+              className="h-full bg-gradient-to-r from-emerald-400 to-sky-500 transition-all"
               style={{ width: `${percent}%` }}
             />
           </div>
@@ -104,7 +123,7 @@ function TutorialPage() {
       </div>
 
       <div className="grid lg:grid-cols-[280px_1fr] gap-4">
-        {/* Step list */}
+        {/* Sidebar */}
         <aside className="rounded-3xl glass p-3 h-fit lg:sticky lg:top-24">
           <ol className="space-y-1">
             {tutorialSteps.map((s, i) => {
@@ -117,22 +136,18 @@ function TutorialPage() {
                     className={[
                       "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-left transition",
                       isActive
-                        ? "bg-foreground text-background shadow-md"
+                        ? "bg-foreground text-background"
                         : "hover:bg-white/60 text-foreground/80",
                     ].join(" ")}
                   >
-                    <span
-                      className={[
-                        "h-7 w-7 grid place-items-center rounded-full text-xs font-semibold shrink-0",
-                        isDone
-                          ? "bg-success text-success-foreground"
-                          : isActive
-                            ? "bg-background/20 text-background"
-                            : "bg-white/70 text-foreground border border-white/70",
-                      ].join(" ")}
-                    >
-                      {isDone ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
+                    <span className="h-7 w-7 grid place-items-center rounded-full text-xs font-semibold shrink-0 bg-white/70">
+                      {isDone ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      ) : (
+                        i + 1
+                      )}
                     </span>
+
                     <span className="truncate">{s.title}</span>
                   </button>
                 </li>
@@ -141,63 +156,67 @@ function TutorialPage() {
           </ol>
         </aside>
 
-        {/* Active step */}
+        {/* Content */}
         <section className="rounded-3xl glass-strong p-7">
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-3xl" aria-hidden>{step.icon}</span>
+            <Icon className="h-7 w-7 text-foreground" />
+
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <div className="text-xs font-semibold uppercase text-muted-foreground">
                 Step {active + 1} of {total}
               </div>
               <h2 className="text-2xl font-bold">{step.title}</h2>
             </div>
           </div>
+
           <p className="text-muted-foreground">{step.summary}</p>
 
           <div className="mt-5 space-y-3">
             {step.detail.map((line, idx) => (
-              <div key={idx} className="flex gap-3 rounded-2xl bg-white/50 border border-white/60 p-4">
-                <span className="h-6 w-6 grid place-items-center rounded-full bg-[image:var(--gradient-primary)] text-white text-xs font-bold shrink-0">
+              <div
+                key={idx}
+                className="flex gap-3 rounded-2xl bg-white/50 border p-4"
+              >
+                <span className="h-6 w-6 grid place-items-center rounded-full bg-gradient-to-r from-emerald-400 to-sky-500 text-white text-xs font-bold">
                   {idx + 1}
                 </span>
-                <div className="prose prose-sm max-w-none text-sm prose-strong:text-foreground prose-code:text-foreground prose-code:bg-white/70 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none">
+
+                <div className="text-sm">
                   <ReactMarkdown>{line}</ReactMarkdown>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-7 flex flex-wrap items-center justify-between gap-3 pt-5 border-t border-white/40">
+          {/* Actions */}
+          <div className="mt-7 flex justify-between pt-5 border-t">
             <button
               onClick={() => toggleDone(step.id)}
-              className={[
-                "inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition",
-                done.has(step.id)
-                  ? "bg-success/15 text-success-foreground"
-                  : "bg-white/70 hover:bg-white text-foreground border border-white/70",
-              ].join(" ")}
+              className="px-4 py-2.5 rounded-xl text-sm font-medium bg-white/70"
             >
-              <CheckCircle2 className="h-4 w-4" />
-              {done.has(step.id) ? "Marked complete" : "Mark as complete"}
+              {done.has(step.id)
+                ? "Marked complete"
+                : "Mark as complete"}
             </button>
 
             <div className="flex gap-2">
               <button
                 onClick={() => setActive((a) => Math.max(0, a - 1))}
                 disabled={active === 0}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl glass text-sm font-medium disabled:opacity-40 disabled:pointer-events-none"
+                className="px-4 py-2.5 rounded-xl glass text-sm"
               >
-                <ChevronLeft className="h-4 w-4" /> Previous
+                <ChevronLeft className="h-4 w-4" />
               </button>
+
               <button
                 onClick={() => {
                   setDone((prev) => new Set(prev).add(step.id));
                   setActive((a) => Math.min(total - 1, a + 1));
                 }}
                 disabled={active === total - 1}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[image:var(--gradient-primary)] text-white text-sm font-medium shadow-lg disabled:opacity-40 disabled:pointer-events-none"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-400 to-sky-500 text-white text-sm"
               >
-                Next step <ChevronRight className="h-4 w-4" />
+                Next <ChevronRight className="h-4 w-4 inline-block ml-1" />
               </button>
             </div>
           </div>
