@@ -12,10 +12,10 @@ import {
   AUTOMATION_EVENT, type DeviceConfig,
 } from "@/lib/automation-runs";
 import { useEventTick } from "@/lib/use-storage";
-import { FileExplorer } from "./FileExplorer";
-import { ExecutionPanel } from "./ExecutionPanel";
-import { DeviceView } from "./DeviceView";
-import { OutputViewer } from "./OutputViewer";
+import { FileExplorer } from "./SubElements/FileExplorer";
+import { ExecutionPanel } from "./SubElements/ExecutionPanel";
+import { DeviceView } from "./SubElements/DeviceView";
+import { OutputViewer } from "./SubElements/OutputViewer";
 import type { MobileFolderNode, MobileScriptFile } from "./types";
 import { Package, Smartphone, Upload, Plus, Apple, Trash2, Settings2, X, Save } from "lucide-react";
 

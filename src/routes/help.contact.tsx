@@ -23,7 +23,7 @@ const CONTACT = {
 function ContactPage() {
   return (
     <Shell>
-      <div className="rounded-3xl glass-strong p-7 mb-5 relative overflow-hidden">
+      <div className="rounded-3xl glass-strong p-4 mb-5 relative overflow-hidden">
         <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-emerald-300 to-sky-400 opacity-25 blur-3xl" />
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-4">
@@ -33,8 +33,7 @@ function ContactPage() {
             <div>
               <h1 className="text-3xl font-bold">Contact the system owner</h1>
               <p className="mt-1 text-sm text-muted-foreground max-w-xl">
-                For bug reports, account help, feature requests or anything else about QE Hub —
-                reach Hazami directly through any channel below.
+                For bug reports, account help, feature requests or anything else about QE Hub.
               </p>
             </div>
           </div>

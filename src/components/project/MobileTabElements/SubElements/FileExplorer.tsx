@@ -13,7 +13,7 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import type { MobileFolderNode, MobileScriptFile } from "./types";
+import type { MobileFolderNode, MobileScriptFile } from "../types";
 
 interface FileExplorerProps {
   tree: MobileFolderNode[];

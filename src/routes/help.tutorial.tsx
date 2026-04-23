@@ -85,12 +85,6 @@ function TutorialPage() {
             >
               <RotateCcw className="h-4 w-4" /> Reset
             </button>
-            <Link
-              to="/help/chat"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground text-background text-sm font-medium"
-            >
-              <MessageCircle className="h-4 w-4" /> Ask AI
-            </Link>
           </div>
         </div>
 

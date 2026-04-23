@@ -52,20 +52,6 @@ function FaqPage() {
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Link
-              to="/help/chat"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass text-sm font-medium"
-            >
-              <MessageCircle className="h-4 w-4" /> Ask AI
-            </Link>
-            <Link
-              to="/help/tutorial"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass text-sm font-medium"
-            >
-              <GraduationCap className="h-4 w-4" /> Tutorial
-            </Link>
-          </div>
         </div>
       </div>
 
