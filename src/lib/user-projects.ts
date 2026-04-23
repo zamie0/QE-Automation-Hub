@@ -6,7 +6,6 @@ export type ProjectTabId =
   | "overview"
   | "cases"
   | "api"
-  | "scripts"
   | "rpa"
   | "mobile"
   | "web"
@@ -41,7 +40,6 @@ export const ALL_TABS: { id: ProjectTabId; label: string; description: string; r
   { id: "overview", label: "Overview", description: "Smart dashboard with KPIs and trends" },
   { id: "cases", label: "Test Cases", description: "Manage manual + automated test cases" },
   { id: "api", label: "API Testing", description: "Endpoints, requests, contracts" },
-  { id: "scripts", label: "Scripts", description: "Playwright / Cypress / Robot scripts", nonRpaOnly: true },
   { id: "rpa", label: "RPA Builder", description: "Visual flow builder for bots", rpaOnly: true },
   { id: "mobile", label: "Mobile", description: "Devices and mobile builds", nonRpaOnly: true },
   { id: "web", label: "Web & Suites", description: "Suites, environments, browsers", nonRpaOnly: true },
@@ -143,7 +141,7 @@ export function deleteUserProject(id: string) {
 // ---------- per-project tab visibility (works for built-in mock projects too) ----------
 
 interface TabsMap {
-  [projectId: string]: ProjectTabId[];
+  [projectId: string]: string[];
 }
 
 function readTabs(): TabsMap {
@@ -159,12 +157,17 @@ function writeTabs(map: TabsMap) {
 
 export function getProjectTabs(projectId: string, fallback: ProjectTabId[]): ProjectTabId[] {
   const map = readTabs();
-  return map[projectId] ?? fallback;
+  const valid = new Set<ProjectTabId>(ALL_TABS.map((t) => t.id));
+  const source = map[projectId] ?? fallback;
+  const sanitized = source.filter((id): id is ProjectTabId => valid.has(id as ProjectTabId));
+  if (sanitized.length === 0) return fallback;
+  return sanitized;
 }
 
 export function setProjectTabs(projectId: string, tabs: ProjectTabId[]) {
   const map = readTabs();
-  map[projectId] = tabs;
+  const valid = new Set<ProjectTabId>(ALL_TABS.map((t) => t.id));
+  map[projectId] = tabs.filter((id) => valid.has(id));
   writeTabs(map);
 }
 

@@ -17,7 +17,7 @@ import { ExecutionPanel } from "./ExecutionPanel";
 import { DeviceView } from "./DeviceView";
 import { OutputViewer } from "./OutputViewer";
 import type { MobileFolderNode, MobileScriptFile } from "./types";
-import { Package, Smartphone, Upload, Plus, Apple, Trash2, Settings2, X } from "lucide-react";
+import { Package, Smartphone, Upload, Plus, Apple, Trash2, Settings2, X, Save } from "lucide-react";
 
 export function MobileTab({ project }: { project: Project }) {
   useEventTick(AUTOMATION_EVENT);
@@ -34,6 +34,7 @@ export function MobileTab({ project }: { project: Project }) {
   const [manualFolders, setManualFolders] = useState<string[]>([]);
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({});
   const [selectedFileId, setSelectedFileId] = useState<string>("");
+  const [scriptDrafts, setScriptDrafts] = useState<Record<string, string>>({});
 
   const STORAGE_KEY = `qe-hub.mobile-scripts.${project.id}`;
   const FOLDERS_KEY = `qe-hub.mobile-folders.${project.id}`;
@@ -85,6 +86,14 @@ export function MobileTab({ project }: { project: Project }) {
     [scripts, selectedFileId],
   );
   const selectedApk = useMemo(() => state.apks.find((apk) => apk.id === selApk), [state.apks, selApk]);
+  const selectedStoredScript = useMemo(
+    () => state.scripts.find((s) => s.id === selectedFile?.scriptId),
+    [state.scripts, selectedFile],
+  );
+  const selectedScriptKey = selectedFile?.id ?? "";
+  const selectedScriptContent = selectedScriptKey
+    ? scriptDrafts[selectedScriptKey] ?? selectedStoredScript?.preview ?? defaultRobotTemplate(selectedFile?.name)
+    : "";
   const activeRun = useMemo(
     () => state.runs.find((r) => r.id === activeRunId) ?? state.runs[0],
     [state.runs, activeRunId],
@@ -93,6 +102,17 @@ export function MobileTab({ project }: { project: Project }) {
   useEffect(() => {
     if (!activeRunId && state.runs.length) setActiveRunId(state.runs[0].id);
   }, [state.runs, activeRunId]);
+
+  useEffect(() => {
+    if (!selectedScriptKey) return;
+    setScriptDrafts((prev) => {
+      if (prev[selectedScriptKey] !== undefined) return prev;
+      return {
+        ...prev,
+        [selectedScriptKey]: selectedStoredScript?.preview ?? defaultRobotTemplate(selectedFile?.name),
+      };
+    });
+  }, [selectedScriptKey, selectedStoredScript, selectedFile]);
 
   function onApkPicked(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -261,6 +281,41 @@ export function MobileTab({ project }: { project: Project }) {
           canRun={canRun}
           onSelectDevice={setSelDevice}
           onRun={() => handleRun()}
+        />
+      </div>
+
+      <div className="rounded-2xl bg-foreground overflow-hidden border border-white/10">
+        <div className="flex items-center justify-between gap-2 px-4 py-2 border-b border-white/10">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex gap-1.5 shrink-0">
+              <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+            </div>
+            <div className="text-[11px] text-background/60 font-mono ml-2 truncate">
+              {selectedFile?.path ?? "Select a .robot file from explorer"}
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              if (!selectedScriptKey) return;
+              setScriptDrafts((prev) => ({ ...prev, [selectedScriptKey]: selectedScriptContent }));
+            }}
+            disabled={!selectedScriptKey}
+            className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-white/10 text-background/90 disabled:opacity-40"
+          >
+            <Save className="h-3.5 w-3.5" /> Save
+          </button>
+        </div>
+        <textarea
+          value={selectedScriptContent}
+          onChange={(e) => {
+            if (!selectedScriptKey) return;
+            setScriptDrafts((prev) => ({ ...prev, [selectedScriptKey]: e.target.value }));
+          }}
+          disabled={!selectedScriptKey}
+          placeholder="Select a script file in explorer to edit Robot Framework code."
+          className="w-full min-h-[260px] max-h-[380px] px-4 py-3 text-background/95 bg-transparent overflow-auto whitespace-pre text-xs font-mono outline-none resize-y disabled:opacity-60"
         />
       </div>
 
@@ -496,6 +551,16 @@ function sortTree(folder: MobileFolderNode) {
   folder.folders.sort((a, b) => a.name.localeCompare(b.name));
   folder.files.sort((a, b) => a.name.localeCompare(b.name));
   folder.folders.forEach(sortTree);
+}
+
+function defaultRobotTemplate(name?: string): string {
+  const testName = (name || "New Test").replace(/\.robot$/i, "");
+  return `*** Settings ***
+
+*** Test Cases ***
+${testName}
+    Log    Hello from ${testName}
+`;
 }
 
 function Field({

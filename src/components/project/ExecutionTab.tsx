@@ -43,7 +43,7 @@ export function ExecutionTab({ project }: { project: Project }) {
 
         {state.runs.length === 0 ? (
           <div className="text-xs text-muted-foreground text-center py-8">
-            No runs yet. Trigger a run from the <b>Mobile</b> or <b>Scripts</b> tab.
+            No runs yet. Trigger a run from the <b>Mobile</b> or <b>Web &amp; Suites</b> tab.
           </div>
         ) : (
           <div className="space-y-1.5 max-h-[600px] overflow-y-auto pr-1">

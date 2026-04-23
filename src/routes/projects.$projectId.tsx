@@ -5,13 +5,12 @@ import { getUserProject, getProjectTabs, defaultTabsFor, ALL_TABS, type ProjectT
 import { useEventTick } from "@/lib/use-storage";
 import { useState } from "react";
 import {
-  ArrowLeft, Play, Calendar, BarChart3, FileCode2, Bot, ListChecks, Network,
+  ArrowLeft, Play, Calendar, BarChart3, Bot, ListChecks, Network,
   Smartphone, Globe, Zap, MessageSquare, Settings as SettingsIcon, TrendingUp,
 } from "lucide-react";
 import { OverviewTab } from "@/components/project/OverviewTab";
 import { CasesTab } from "@/components/project/CasesTab";
 import { ApiTab } from "@/components/project/ApiTab";
-import { ScriptsTab } from "@/components/project/ScriptsTab";
 import { MobileTab } from "@/components/project/MobileTabElements/MobileTab";
 import { WebTab } from "@/components/project/WebTabElements/WebTab";
 import { ExecutionTab } from "@/components/project/ExecutionTab";
@@ -70,7 +69,6 @@ const TAB_META: Record<ProjectTabId, { label: string; icon: typeof Play }> = {
   overview: { label: "Overview", icon: BarChart3 },
   cases: { label: "Test Cases", icon: ListChecks },
   api: { label: "API Testing", icon: Network },
-  scripts: { label: "Scripts", icon: FileCode2 },
   rpa: { label: "RPA Builder", icon: Bot },
   mobile: { label: "Mobile", icon: Smartphone },
   web: { label: "Web & Suites", icon: Globe },
@@ -114,7 +112,6 @@ function ProjectDetail() {
   const fallbackTabs = isUser
     ? (project as UserProject).tabs
     : defaultTabsFor(project.type).filter((t) => {
-        if (t === "scripts" && isRpa) return false;
         if (t === "rpa" && !isRpa) return false;
         return true;
       });
@@ -201,7 +198,6 @@ function ProjectDetail() {
           {activeTab === "overview" && <OverviewTab project={project as Project} />}
           {activeTab === "cases" && <CasesTab project={project as Project} />}
           {activeTab === "api" && <ApiTab project={project as Project} />}
-          {activeTab === "scripts" && <ScriptsTab project={project as Project} />}
           {activeTab === "rpa" && <RpaTab project={project as Project} />}
           {activeTab === "mobile" && <MobileTab project={project as Project} />}
           {activeTab === "web" && <WebTab project={project as Project} />}

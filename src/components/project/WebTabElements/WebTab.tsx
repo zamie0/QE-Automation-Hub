@@ -42,6 +42,7 @@ export function WebTab({ project }: { project: Project }) {
   const [parallel, setParallel] = useState(true);
   const [showEnvModal, setShowEnvModal] = useState(false);
   const [editingEnv, setEditingEnv] = useState<WebEnvironment | null>(null);
+  const [scriptDrafts, setScriptDrafts] = useState<Record<string, string>>({});
 
   const latestRun = useMemo(
     () => state.runs.find((r) => r.kind === "web") ?? state.runs[0],
@@ -79,6 +80,10 @@ export function WebTab({ project }: { project: Project }) {
 
   const canRun = !!envId && selBrowsers.length > 0;
   const env = state.webEnvs.find((e) => e.id === envId);
+  const selectedScript = state.webScripts.find((s) => s.id === scriptId);
+  const selectedScriptContent = scriptId
+    ? scriptDrafts[scriptId] ?? selectedScript?.preview ?? ""
+    : "";
 
   return (
     <div className="space-y-4">
@@ -274,6 +279,31 @@ export function WebTab({ project }: { project: Project }) {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="rounded-2xl bg-foreground overflow-hidden border border-white/10">
+        <div className="flex items-center justify-between gap-2 px-4 py-2 border-b border-white/10">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex gap-1.5 shrink-0">
+              <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+            </div>
+            <div className="text-[11px] text-background/60 font-mono ml-2 truncate">
+              {selectedScript?.name ?? "Select a script to preview / edit"}
+            </div>
+          </div>
+        </div>
+        <textarea
+          value={selectedScriptContent}
+          onChange={(e) => {
+            if (!scriptId) return;
+            setScriptDrafts((prev) => ({ ...prev, [scriptId]: e.target.value }));
+          }}
+          disabled={!scriptId}
+          placeholder="Select a script from the dropdown to edit code."
+          className="w-full min-h-[240px] max-h-[380px] px-4 py-3 text-background/95 bg-transparent overflow-auto whitespace-pre text-xs font-mono outline-none resize-y disabled:opacity-60"
+        />
       </div>
 
       {/* Latest results */}
