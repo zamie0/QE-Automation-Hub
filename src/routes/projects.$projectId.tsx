@@ -5,8 +5,8 @@ import { getUserProject, getProjectTabs, defaultTabsFor, ALL_TABS, type ProjectT
 import { useEventTick } from "@/lib/use-storage";
 import { useState } from "react";
 import {
-  ArrowLeft, Play, Calendar, BarChart3, Bot, ListChecks, Network,
-  Smartphone, Globe, Zap, MessageSquare, Settings as SettingsIcon, TrendingUp,
+  ArrowLeft, Play, Calendar, BarChart3, FileCode2, Bot, ListChecks, Network,
+  Smartphone, Globe, Zap, MessageSquare, Settings as SettingsIcon, TrendingUp, FolderOpen,
 } from "lucide-react";
 import { OverviewTab } from "@/components/project/OverviewTab";
 import { CasesTab } from "@/components/project/CasesTab";
@@ -18,6 +18,7 @@ import { ResultsTab } from "@/components/project/ResultsTab";
 import { RpaTab } from "@/components/project/RpaTab";
 import { DiscussionTab } from "@/components/project/DiscussionTab";
 import { SettingsTab } from "@/components/project/SettingsTab";
+import { FilesTab } from "@/components/project/FilesTab";
 import { CustomTabContent } from "@/components/project/CustomTabContent";
 
 type ProjectLike =
@@ -69,11 +70,13 @@ const TAB_META: Record<ProjectTabId, { label: string; icon: typeof Play }> = {
   overview: { label: "Overview", icon: BarChart3 },
   cases: { label: "Test Cases", icon: ListChecks },
   api: { label: "API Testing", icon: Network },
+  scripts: { label: "Scripts", icon: FileCode2 },
   rpa: { label: "RPA Builder", icon: Bot },
   mobile: { label: "Mobile", icon: Smartphone },
   web: { label: "Web & Suites", icon: Globe },
   execution: { label: "Execution", icon: Zap },
   results: { label: "Results", icon: TrendingUp },
+  files: { label: "Files", icon: FolderOpen },
   discussion: { label: "Discussion", icon: MessageSquare },
   settings: { label: "Settings", icon: SettingsIcon },
 };
@@ -112,6 +115,7 @@ function ProjectDetail() {
   const fallbackTabs = isUser
     ? (project as UserProject).tabs
     : defaultTabsFor(project.type).filter((t) => {
+        if (t === "scripts" && isRpa) return false;
         if (t === "rpa" && !isRpa) return false;
         return true;
       });
@@ -190,6 +194,8 @@ function ProjectDetail() {
       {isUser ? (
         activeTab === "settings" ? (
           <UserSettingsTab project={resolved.project as UserProject} enabled={enabledTabs} fallback={fallbackTabs} />
+          ) : activeTab === "files" ? (
+          <FilesTab projectId={projectId} />
         ) : (
           <CustomTabContent projectId={projectId} tabId={activeTab} label={TAB_META[activeTab].label} />
         )
@@ -198,11 +204,13 @@ function ProjectDetail() {
           {activeTab === "overview" && <OverviewTab project={project as Project} />}
           {activeTab === "cases" && <CasesTab project={project as Project} />}
           {activeTab === "api" && <ApiTab project={project as Project} />}
+          {activeTab === "scripts" && <ScriptsTab project={project as Project} />}
           {activeTab === "rpa" && <RpaTab project={project as Project} />}
           {activeTab === "mobile" && <MobileTab project={project as Project} />}
           {activeTab === "web" && <WebTab project={project as Project} />}
           {activeTab === "execution" && <ExecutionTab project={project as Project} />}
           {activeTab === "results" && <ResultsTab project={project as Project} />}
+          {activeTab === "files" && <FilesTab projectId={projectId} />}
           {activeTab === "discussion" && <DiscussionTab project={project as Project} />}
           {activeTab === "settings" && (
             <div className="space-y-4">

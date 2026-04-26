@@ -11,6 +11,7 @@ export type ProjectTabId =
   | "web"
   | "execution"
   | "results"
+  | "files"
   | "discussion"
   | "settings";
 
@@ -45,6 +46,7 @@ export const ALL_TABS: { id: ProjectTabId; label: string; description: string; r
   { id: "web", label: "Web & Suites", description: "Suites, environments, browsers", nonRpaOnly: true },
   { id: "execution", label: "Execution", description: "Trigger & monitor runs" },
   { id: "results", label: "Results", description: "Run history, charts, exports" },
+  { id: "files", label: "Files", description: "Folders, file uploads, editor" },
   { id: "discussion", label: "Discussion", description: "Team discussion threads" },
   { id: "settings", label: "Settings", description: "Project config & integrations" },
 ];
